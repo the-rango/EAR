@@ -6,6 +6,8 @@ url = urlparse(os.environ.get('REDISCLOUD_URL'))
 
 r = redis.Redis(host=url.hostname, port=url.port, password=url.password)
 
+r.flushall()
+
 r.set('Shijia', 'Lorolana')
 
 print('done')
