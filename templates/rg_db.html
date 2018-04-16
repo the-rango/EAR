@@ -1,0 +1,80 @@
+<!doctype html>
+
+
+
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+
+
+
+  <title>Database</title>
+
+  <meta name="description" content="peeks at the db contents">
+
+  <meta name="author" content="Me">
+
+
+
+  <link rel="stylesheet" href="css/styles.css?v=1.0">
+
+  
+
+  <style>
+
+    p {
+
+      font: 30px calibri;
+
+    }
+
+    input {
+
+      font-size:14pt;
+
+    }
+
+  </style>
+
+
+
+  <!--[if lt IE 9]>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
+
+  <![endif]-->
+
+</head>
+
+
+
+<body>
+
+  <p>Hi Shijia! This is our website! </p>
+  <p>Enter Redis database key (gvkey), for tweets fetched:</p>
+
+  <form method="post" action="" >
+
+<p><input name="key" size="30" />
+
+<input type="submit" name="Submit" value="get it doggo" /></p>
+
+  </form>
+
+  
+
+  {% if val %}
+
+
+  <p>{{ val|safe }}</p>
+
+      <br>
+
+
+  {% endif %}
+
+</body>
+
+</html>
