@@ -1,5 +1,6 @@
 import Doggo
 import redis
+import os
 from urllib.parse import urlparse
 
 url = urlparse(os.environ.get('REDISTOGO_URL'))
