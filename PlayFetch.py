@@ -1,5 +1,6 @@
 import Doggo
 import redis
+from urllib.parse import urlparse
 
 url = urlparse(os.environ.get('REDISTOGO_URL'))
 meta = redis.Redis(host=url.hostname, port=url.port, password=url.password)
