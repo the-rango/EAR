@@ -9,6 +9,6 @@ r = redis.Redis(host=url.hostname, port=url.port, password=url.password)
 for gvkey in r.scan_iter("user:*"):
     handles, l_id = r.get(gvkey)
     if len(handles) == 1:
-        r.set(gvkey, {handles[0]:l_id}
+        r.set(gvkey, {handles[0]:l_id})
 
 print('done')
