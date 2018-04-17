@@ -29,39 +29,12 @@ def parse_username(url):
 
 doggo = Doggo.Retriever()
 
-with open('f_input.txt') as inp:
-    for line in inp:
-        contents = line.split('\t')
-
-        if len(contents) == 1:
-            handle = contents[0]
-        elif len(contents) == 2:
-            gvkey, handle = contents
-
-        if progress % 100 == 0:
-            print('n\\a count: {}'.format(nact))
-            nact = 0
-
-            print(progress)
-            if workbook != None:
-                workbook.close()
-            workbook = xlsxwriter.Workbook('additional_book{}.xlsx'.format(int(progress/100)+1))
-            worksheet = workbook.add_worksheet()
-            row = 0
-            col = 0
-            for header in ['gvkey','id','time stamp',
-                           'text','images','videos','hashtag',
-                           'retweets','likes',
-                           'join date','followers','following','total tweets']:
-                worksheet.write(row, col, header)
-                col += 1
-            col = 0
-            row += 1
-
-        progress += 1
-
+for gvkey in meta.scan_iter("user:*"):
+    handles = eval(meta.get(gvkey))
+    tweets = {}
+    for handle, l_id in handles.items():
         if len(handle.split('/')) == 2:
-            nact += 1
+            print('n/a found')
             continue
 
         try:
@@ -72,12 +45,9 @@ with open('f_input.txt') as inp:
 
         try:
             for tweet in doggo.get_tweets(handle):
-                worksheet.write(row, col, int(gvkey))
-                for item in tweet:
-                    col += 1
-                    worksheet.write(row, col, item)
-                row += 1
-                col = 0     
+                tweets[tweet[0]] = tweet[1:]
         except Exception as e:
             print(e)
-            continue                  
+            continue        
+            
+    store.set(gvkey, tweets)
