@@ -92,7 +92,7 @@ class Retriever:
                                                count=200,
                                                include_rts='false',
                                                exclude_replies='true',
-                                               since_id=l_id
+                                               since_id=l_id,
                                                tweet_mode='extended').items()
                 elif str(e).strip() == '':
                     return[]
