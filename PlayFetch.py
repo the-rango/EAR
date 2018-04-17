@@ -32,6 +32,10 @@ doggo = Doggo.Retriever()
 for gvkey in meta.scan_iter("user:*"):
     handles = eval(meta.get(gvkey))
     tweets = {}
+    try:
+        test = handles.keys()
+    except:
+        continue
     for handle, l_id in handles.items():
         if len(handle.split('/')) == 2:
             print('n/a found')
