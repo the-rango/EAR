@@ -31,7 +31,7 @@ def parse_username(url):
 
 doggo = Doggo.Retriever()
 
-for gvkey in meta.scan_iter("user:*"):
+for gvkey in meta.scan_iter():
     handles = eval(meta.get(gvkey))
     tweets = {}
     try:
