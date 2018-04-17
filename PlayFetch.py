@@ -1,6 +1,12 @@
 import Doggo
 import redis
 
+url = urlparse(os.environ.get('REDISTOGO_URL'))
+meta = redis.Redis(host=url.hostname, port=url.port, password=url.password)
+
+url = urlparse(os.environ.get('REDISGREEN_URL'))
+store = redis.Redis(host=url.hostname, port=url.port, password=url.password)
+
 def parse_username(url):
     if '"' == url[0]:
         url =  url[1:]
