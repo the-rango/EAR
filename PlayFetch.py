@@ -32,7 +32,10 @@ def parse_username(url):
 doggo = Doggo.Retriever()
 
 for gvkey in meta.scan_iter():
-    handles = eval(meta.get(gvkey))
+    try:
+        handles = eval(meta.get(gvkey))
+    except:
+        continue
     tweets = {}
     try:
         test = handles.keys()
