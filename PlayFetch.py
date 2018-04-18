@@ -50,7 +50,7 @@ for gvkey in meta.scan_iter():
             continue
 
         try:
-            for tweet in doggo.get_tweets(handle):
+            for tweet in doggo.get_tweets(handle, l_id):
                 tweets[tweet[0]] = tweet[1:]
         except Exception as e:
             print(e)
