@@ -22,5 +22,5 @@ def rg():
     val = None
     if request.method == 'POST':
         url = urlparse(os.environ.get('REDISGREEN_URL'))
-        val = redis.Redis(host=url.hostname, port=url.port, password=url.password).get(request.form['key'])
+        val = str(redis.Redis(host=url.hostname, port=url.port, password=url.password).get(request.form['key']))
     return render_template('rg_db.html', val=val)
