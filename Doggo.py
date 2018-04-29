@@ -1,19 +1,30 @@
 import os
 import tweepy
 import time
-import redis
+
+def form_month(s):
+    months = 'janfebmaraprmayjunjulaugsepoctnovdec'
+    return int(months.find(s.lower())/3+1)
 
 def parse_json(tweet):
-    #        'id','time stamp',
-    #        'text','images','videos,'hashtag',
-    #        'retweets','likes',
-    #        'join date','followers','following','total tweets'
+#    'gvkey','id','ts_month','ts_day','ts_year','ts_time',
+#    'text','images','i_dummy','videos','v_dummy','hashtag',
+#    'retweets','likes',
+#    'join date','followers','following','total tweets','handle'
     result = []
     
     result.append(tweet['id'])
-    result.append(tweet['created_at'])
+    tmp = tweet['created_at'].split()
+    result.append(form_month(tmp[1]))
+    result.append(int(tmp[2]))
+    result.append(int(tmp[-1]))
+    result.append(tmp[3])
     
-    result.append(tweet['full_text'])
+    tmp = tweet['full_text'].split()
+    for word in tmp:
+        if 'http' in word and '://' in word and '.' in word:
+            tmp.remove(word)
+    result.append(' '.join(tmp))
     images, videos = [], []
     if 'media' in tweet['entities']:
         for medium in tweet['entities']['media']:
@@ -25,18 +36,27 @@ def parse_json(tweet):
                 if medium['type'] == 'video':
                     videos.append(medium['video_info']['variants'][0]['url'])
     result.append(str(images))
+    if len(images) == 0:
+        result.append(0)
+    else:
+        result.append(1)
     result.append(str(videos))
+    if len(videos) == 0:
+        result.append(0)
+    else:
+        result.append(1)
     result.append(' '.join(d['text'] for d in tweet['entities']['hashtags']))
     
     result.append(tweet['retweet_count'])
     result.append(tweet['favorite_count'])
     
-    result.append(tweet['user']['created_at'])
+    tmp = tweet['user']['created_at'].split()
+    result.append('{}/{}/{}'.format(form_month(tmp[1]),tmp[2],tmp[-1]))
     result.append(tweet['user']['followers_count'])
     result.append(tweet['user']['friends_count'])
     result.append(tweet['user']['statuses_count'])
 
-    return result            
+    return result         
 
 # generator
 class Retriever:
@@ -54,14 +74,14 @@ class Retriever:
 
         api.append(tweepy.API(auth))
     
-    def get_tweets(self, user, l_id):
+    def get_tweets(self, user, lid):
         #print(user)
         cursor = tweepy.Cursor(self.api[self.account].user_timeline,
                                screen_name=user,
                                include_rts='false',
                                exclude_replies='true',
                                tweet_mode='extended',
-                               since_id=l_id,
+                               since_id=int(lid)+1,
                                count=200).items()
         last_id = ''
         while True:
@@ -72,7 +92,9 @@ class Retriever:
             except Exception as e:
                 if '429' in str(e):
                     print('***HIT RATE LIMIT***')
-                    time.sleep(6.7 * 60)
+                    for i in range(6*60):
+                        print(i-20,end='')
+                        time.sleep(1)
                     if self.account == 0:
                         self.account = 1
                     else:
@@ -83,7 +105,7 @@ class Retriever:
                                                count=200,
                                                include_rts='false',
                                                exclude_replies='true',
-                                               since_id=l_id,
+                                               since_id=int(lid)+1,
                                                tweet_mode='extended').items()
                     else:
                         cursor = tweepy.Cursor(self.api[self.account].user_timeline,
@@ -92,7 +114,7 @@ class Retriever:
                                                count=200,
                                                include_rts='false',
                                                exclude_replies='true',
-                                               since_id=l_id,
+                                               since_id=int(lid)+1,
                                                tweet_mode='extended').items()
                 elif str(e).strip() == '':
                     return[]
