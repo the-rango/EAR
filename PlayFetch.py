@@ -3,31 +3,13 @@ import redis
 import os
 from urllib.parse import urlparse
 
-url = urlparse(os.environ.get('REDISTOGO_URL'))
-meta = redis.Redis(host=url.hostname, port=url.port, password=url.password)
+meta = redis.from_url(os.environ.get('REDISTOGO_URL'))
+# url = urlparse(os.environ.get())
+# meta = redis.Redis(host=url.hostname, port=url.port, password=url.password)
 
-url = urlparse(os.environ.get('REDISGREEN_URL'))
-store = redis.Redis(host=url.hostname, port=url.port, password=url.password)
-
-def parse_username(url):
-    if '"' == url[0]:
-        url =  url[1:]
-    if '"' == url[-1]:
-        url = url[:-1]
-    if 'twitter.com' not in url:
-        raise Exception('wtf')
-    beg = url.find('https://twitter.com/')
-    end = url.find('?')
-    if end == -1:
-        result = url[beg+20:]
-    else:
-        result = url[beg+20:end]
-    if '/' in result:
-        if result[-1] == '/':
-            result = result[:-1]
-        else:
-            raise Exception('wtf')
-    return result
+store = redis.from_url(os.environ.get('REDISGREEN_URL'))
+# url = urlparse(os.environ.get())
+# store = redis.Redis(host=url.hostname, port=url.port, password=url.password)
 
 doggo = Doggo.Retriever()
 
@@ -36,27 +18,24 @@ for gvkey in meta.scan_iter():
         handles = eval(meta.get(gvkey))
     except:
         continue
+
     tweets = {}
-    try:
-        test = handles.keys()
-    except:
-        continue
-    for handle, l_id in handles.items():
-        if len(handle.split('/')) == 2:
-            print('n/a found')
-            continue
 
+    for user, latest in handles.items():
+        new_id = None
         try:
-            handle = parse_username(handle.strip())
-        except:
-            print('bad url: {}'.format(handle), end='')
-            continue
-
-        try:
-            for tweet in doggo.get_tweets(handle, l_id):
+            for tweet in doggo.get_tweets(user, latest):
+                if new_id == None:
+                    new_id = tweet[0]
                 tweets[tweet[0]] = tweet[1:]
+                store.set((gvkey, user), tweets)
+            if new_id != None:
+                old_info = eval(meta.get(gvkey))
+                print(old_info)
+                old_info[user] = new_id
+                meta.set(gvkey, old_info)
+                if new_id < latest:
+                    print('Houston we have a problem')
         except Exception as e:
-            print(e)
+            print('Out loop exception: {}'.format(e))
             continue        
-            
-    store.set(gvkey, tweets)
