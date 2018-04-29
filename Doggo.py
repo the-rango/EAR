@@ -3,8 +3,7 @@ import tweepy
 import time
 
 def form_month(s):
-    months = 'janfebmaraprmayjunjulaugsepoctnovdec'
-    return int(months.find(s.lower())/3+1)
+    return int('janfebmaraprmayjunjulaugsepoctnovdec'.find(s.lower())/3+1)
 
 def parse_json(tweet):
 #    'gvkey','id','ts_month','ts_day','ts_year','ts_time',
