@@ -4,12 +4,7 @@ import os
 from urllib.parse import urlparse
 
 meta = redis.from_url(os.environ.get('REDISTOGO_URL'))
-# url = urlparse(os.environ.get())
-# meta = redis.Redis(host=url.hostname, port=url.port, password=url.password)
-
 store = redis.from_url(os.environ.get('REDISGREEN_URL'))
-# url = urlparse(os.environ.get())
-# store = redis.Redis(host=url.hostname, port=url.port, password=url.password)
 
 doggo = Doggo.Retriever()
 
@@ -18,7 +13,10 @@ for gvkey in meta.scan_iter():
 
     for user, latest in handles.items():
         try:
-            tweets = eval(store.get((gvkey, user)))
+            tweets = eval(store.get(user))
+            if tweets == None:
+                tweets = {}
+                print('tis none')
         except:
             tweets = {}
         new_id = None
@@ -27,7 +25,7 @@ for gvkey in meta.scan_iter():
                 if new_id == None:
                     new_id = tweet[0]
                 tweets[tweet[0]] = tweet[1:]
-                store.set((gvkey, user), tweets)
+                store.set(user, tweets)
             if new_id != None:
                 old_info = eval(meta.get(gvkey))
                 print(old_info)
