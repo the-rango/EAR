@@ -1,6 +1,7 @@
 import Doggo
 import redis
 import os
+import datetime
 
 meta = redis.from_url(os.environ.get('REDISTOGO_URL'))
 store = redis.from_url(os.environ.get('REDISGREEN_URL'))
@@ -35,3 +36,16 @@ for gvkey in meta.scan_iter():
         except Exception as e:
             print('Out loop exception: {}'.format(e))
             continue        
+            
+log = redis.from_url(os.environ.get('REDIS_URL'))
+try:
+    history = eval(log.get('log'))
+    if history == None:
+        history = ''
+except:
+    history = ''
+    
+history += str(datetime.date.today())
+history += ': Done'
+log.set('log', history)
+print('Done')
