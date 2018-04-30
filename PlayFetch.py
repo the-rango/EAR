@@ -14,14 +14,13 @@ store = redis.from_url(os.environ.get('REDISGREEN_URL'))
 doggo = Doggo.Retriever()
 
 for gvkey in meta.scan_iter():
-    try:
-        handles = eval(meta.get(gvkey))
-    except:
-        continue
-
-    tweets = {}
+    handles = eval(meta.get(gvkey))    
 
     for user, latest in handles.items():
+        try:
+            tweets = eval(store.get((gvkey, user)))
+        except:
+            tweets = {}
         new_id = None
         try:
             for tweet in doggo.get_tweets(user, latest):
