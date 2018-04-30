@@ -1,7 +1,6 @@
 import Doggo
 import redis
 import os
-from urllib.parse import urlparse
 
 meta = redis.from_url(os.environ.get('REDISTOGO_URL'))
 store = redis.from_url(os.environ.get('REDISGREEN_URL'))
