@@ -39,7 +39,7 @@ for gvkey in meta.scan_iter():
             
 log = redis.from_url(os.environ.get('REDIS_URL'))
 try:
-    history = eval(log.get('log'))
+    history = log.get('log')
     if history == None:
         history = ''
 except:
