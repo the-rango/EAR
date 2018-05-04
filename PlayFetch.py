@@ -45,7 +45,7 @@ try:
 except:
     history = ''
     
-history += str(datetime.date.today())
-history += ': Done'
+history += bytes(str(datetime.date.today()), 'utf-8')
+history += bytes(': Done', 'utf-8')
 log.set('log', history)
 print('Done')
