@@ -46,6 +46,6 @@ except:
     history = ''
     
 history += bytes(str(datetime.date.today()), 'utf-8')
-history += bytes(': Done', 'utf-8')
+history += bytes(': Done\n', 'utf-8')
 log.set('log', history)
 print('Done')
