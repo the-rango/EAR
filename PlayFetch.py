@@ -4,7 +4,7 @@ import os
 import datetime
 
 meta = redis.from_url(os.environ.get('REDISTOGO_URL'))
-store = redis.from_url(os.environ.get('REDISGREEN_URL'))
+store = redis.from_url(os.environ.get('REDISCLOUD_URL'))
 
 doggo = Doggo.Retriever()
 
