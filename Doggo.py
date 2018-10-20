@@ -20,9 +20,6 @@ def parse_json(tweet):
     result.append(tmp[3])
     
     tmp = tweet['full_text'].split()
-    for word in tmp:
-        if 'http' in word and '://' in word and '.' in word:
-            tmp.remove(word)
     result.append(' '.join(tmp))
     images, videos = [], []
     if 'media' in tweet['entities']:
